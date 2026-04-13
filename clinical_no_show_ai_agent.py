@@ -33,11 +33,11 @@ This system follows a **decision-aware hybrid AI pipeline**:
 
 **Step 3: Conditional Routing (LangGraph)**
 Based on predicted probability:
-- 🔴 **High Risk (> 0.65)**  
+- 🔴 **High Risk (> 0.70)**  
   → Retrieval (Chroma) → Recommendation (LLM) → Strong Intervention  
-- 🟡 **Medium Risk (0.45–0.65)**  
+- 🟡 **Medium Risk (0.50–0.70)**  
   → Direct Recommendation (LLM) → SMS / Call  
-- 🟢 **Low Risk (< 0.45)**  
+- 🟢 **Low Risk (< 0.50)**  
   → Direct Recommendation (LLM) → Minimal Action  
 
 **Step 4: Recommendation Generation**
@@ -184,9 +184,9 @@ def risk_analysis_node(state: AgentState):
       - SMS_received
 
       Risk Level Rule:
-      - >0.65 → High
-      - 0.45–0.65 → Medium
-      - <0.45 → Low
+      - >0.70 → High
+      - 0.50–0.70 → Medium
+      - <0.50 → Low
 
       Instructions:
       - Base your reasoning on the ML model behavior
@@ -259,7 +259,7 @@ def retrieval_node(state: AgentState):
     input_data = state["input_data"]
     probability = state["probability"]
 
-    if state["probability"] <= 0.65:
+    if state["probability"] <= 0.70:
         return {"retrieved_docs": []}
 
     query = f"""
@@ -298,10 +298,10 @@ def recommendation_node(state: AgentState):
     docs_text = "\n".join(f"- {doc}" for doc in docs)
 
     # Rule-based decision
-    if probability > 0.65:
+    if probability > 0.70:
         action_hint = "Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif probability > 0.45:
+    elif 0.5 < probability <= 0.70:
         action_hint = "SMS Reminder"
         risk_level = "Medium"
     else:
@@ -377,9 +377,9 @@ Risk Analysis → Conditional Routing →
 def route_risk(state: AgentState):
     prob = state["probability"]
 
-    if prob > 0.65:
+    if prob > 0.70:
         return "high_risk"
-    elif prob > 0.45:
+    elif 0.5 < prob <= 0.70:
         return "medium_risk"
     else:
         return "low_risk"
