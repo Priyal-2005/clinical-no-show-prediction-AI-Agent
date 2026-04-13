@@ -5,7 +5,7 @@ import pandas as pd
 from typing import Dict
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import FakeEmbeddings
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict, List
 
@@ -27,8 +27,6 @@ def load_model():
 @st.cache_resource
 def setup_llm():
     """Setup LLM (cached)"""
-    import streamlit as st
-
     api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
 
     if not api_key:
@@ -55,9 +53,8 @@ def setup_rag():
         "Patients with >30 day lead time have 2.3x higher no-show rate (JAMA 2017)."
     ]
     
-    embedding = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+
+    embedding = FakeEmbeddings(size=384)
     return Chroma.from_texts(documents, embedding)
 
 # Load resources
