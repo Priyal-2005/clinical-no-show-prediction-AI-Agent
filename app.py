@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 from typing import Dict
 from langchain_groq import ChatGroq
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict, List
@@ -27,9 +27,12 @@ def load_model():
 @st.cache_resource
 def setup_llm():
     """Setup LLM (cached)"""
-    api_key = os.getenv("GROQ_API_KEY")
+    import streamlit as st
+
+    api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+
     if not api_key:
-        st.error("GROQ_API_KEY not found in environment!")
+        st.error("GROQ_API_KEY not found!")
         st.stop()
     
     return ChatGroq(
@@ -52,8 +55,10 @@ def setup_rag():
         "Patients with >30 day lead time have 2.3x higher no-show rate (JAMA 2017)."
     ]
     
-    embedding = HuggingFaceEmbeddings()
-    return FAISS.from_texts(documents, embedding)
+    embedding = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+    return Chroma.from_texts(documents, embedding)
 
 # Load resources
 model = load_model()
@@ -136,7 +141,12 @@ def retrieval_node(state: AgentState):
     if probability <= 0.65:
         return {"retrieved_docs": []}
     
-    query = f"""high risk patient waiting_days: {input_data.get('waiting_days')} age: {input_data.get('Age')}"""
+    query = f"""
+        Patient likely to miss appointment.
+        Waiting days: {input_data.get('waiting_days')}
+        Age: {input_data.get('Age')}
+        SMS received: {input_data.get('SMS_received')}
+    """
     docs = retrieve_docs(query)
     
     return {"retrieved_docs": docs}
@@ -193,7 +203,7 @@ def route_risk(state: AgentState):
 # Build graph
 builder = StateGraph(AgentState)
 builder.add_node("Risk Analysis", risk_analysis_node)
-builder.add_node("Retrieval (FAISS)", retrieval_node)
+builder.add_node("Retrieval (Chroma)", retrieval_node)
 builder.add_node("Recommendation", recommendation_node)
 
 builder.add_edge(START, "Risk Analysis")
@@ -201,12 +211,12 @@ builder.add_conditional_edges(
     "Risk Analysis",
     route_risk,
     {
-        "high_risk": "Retrieval (FAISS)",
+        "high_risk": "Retrieval (Chroma)",
         "medium_risk": "Recommendation",
         "low_risk": "Recommendation"
     }
 )
-builder.add_edge("Retrieval (FAISS)", "Recommendation")
+builder.add_edge("Retrieval (Chroma)", "Recommendation")
 builder.add_edge("Recommendation", END)
 
 graph = builder.compile()
@@ -331,7 +341,7 @@ with st.sidebar:
     **ML Model:** Decision Tree  
     **Recall:** 75%  
     **LLM:** Groq LLaMA 3.3 70B  
-    **RAG:** FAISS Vectorstore  
+    **RAG:** Chroma Vectorstore
     **Framework:** LangGraph
     
     ---

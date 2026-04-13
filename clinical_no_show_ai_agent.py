@@ -14,7 +14,7 @@ This project builds a hybrid AI system that predicts patient no-shows using a ma
 
 ```
 Input → ML Model → Risk Analysis (LLM) → Conditional Routing →
-                      → High Risk → Retrieval (FAISS) → Recommendation (LLM) → Strong Intervention
+                      → High Risk → Retrieval (Chroma) → Recommendation (LLM) → Strong Intervention
                       → Medium Risk → Recommendation (LLM) → SMS / Call  
                       → Low Risk → Recommendation (LLM) → Minimal Action
 ```
@@ -34,7 +34,7 @@ This system follows a **decision-aware hybrid AI pipeline**:
 **Step 3: Conditional Routing (LangGraph)**
 Based on predicted probability:
 - 🔴 **High Risk (> 0.65)**  
-  → Retrieval (FAISS) → Recommendation (LLM) → Strong Intervention  
+  → Retrieval (Chroma) → Recommendation (LLM) → Strong Intervention  
 - 🟡 **Medium Risk (0.45–0.65)**  
   → Direct Recommendation (LLM) → SMS / Call  
 - 🟢 **Low Risk (< 0.45)**  
@@ -56,7 +56,7 @@ This design mirrors real-world clinical workflows where intervention intensity i
 Currently the system is stateless for simplicity and reliability. However, it can be extended with a patient history memory module to improve personalization and long-term decision-making.
 
 ## ⚙️ Setup & Dependencies
-Install required libraries for LangChain, LangGraph, FAISS, and LLM integration.
+Install required libraries for LangChain, LangGraph, Chroma, and LLM integration.
 """
 
 """## 🤖 LLM Setup (Groq API)
@@ -224,7 +224,7 @@ output = risk_analysis_node(state)
 print(output["risk_analysis"])
 
 """## 📚 Knowledge Base (RAG Setup)
-We create a small healthcare knowledge base and store it using FAISS for retrieval.
+We create a small healthcare knowledge base and store it using Chroma for retrieval.
 """
 
 documents = [
@@ -235,11 +235,14 @@ documents = [
     "Overbooking strategies can be used for high no-show probability patients."
 ]
 
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vectorstore = FAISS.from_texts(documents, embedding)
+def setup_rag():
+    return Chroma.from_texts(documents, embedding)
+
+vectorstore = setup_rag()
 
 def retrieve_docs(query):
     docs = vectorstore.similarity_search(query, k=2)
@@ -256,14 +259,14 @@ def retrieval_node(state: AgentState):
     input_data = state["input_data"]
     probability = state["probability"]
 
-    if probability <= 0.65:
-      return {"retrieved_docs": []}
+    if state["probability"] <= 0.65:
+        return {"retrieved_docs": []}
 
     query = f"""
-    high no-show risk patient
-    waiting_days: {input_data['waiting_days']}
-    age: {input_data['Age']}
-    sms_received: {input_data['SMS_received']}
+        Patient at high risk of missing appointment.
+        Long waiting time: {input_data['waiting_days']}
+        Age: {input_data['Age']}
+        No SMS reminder: {1 - input_data['SMS_received']}
     """
 
     docs = retrieve_docs(query)
@@ -388,7 +391,7 @@ builder = StateGraph(AgentState)
 # Add Nodes
 
 builder.add_node("Risk Analysis", risk_analysis_node)
-builder.add_node("Retrieval (FAISS)", retrieval_node)
+builder.add_node("Retrieval (Chroma)", retrieval_node)
 builder.add_node("Recommendation", recommendation_node)
 
 # Build Graph
@@ -398,14 +401,14 @@ builder.add_conditional_edges(
     "Risk Analysis",
     route_risk,
     {
-        "high_risk": "Retrieval (FAISS)", # full pipeline
+        "high_risk": "Retrieval (Chroma)", # full pipeline
         "medium_risk": "Recommendation",  # skip retrieval
         "low_risk": "Recommendation"      # simple path
     }
 )
 
 # normal flow after retrieval
-builder.add_edge("Retrieval (FAISS)", "Recommendation")
+builder.add_edge("Retrieval (Chroma)", "Recommendation")
 builder.add_edge("Recommendation", END)
 
 # end
@@ -434,7 +437,7 @@ dot.node('D', 'Risk Analysis\n(LLM)')
 dot.node('E', 'Risk Level?\n(Conditional Routing)',
          shape='diamond', style='filled', color='lightyellow')
 
-dot.node('F', 'Knowledge Retrieval\n(FAISS)')
+dot.node('F', 'Knowledge Retrieval\n(Chroma)')
 dot.node('G', 'Recommendation Engine\n(LLM + Rules)')
 dot.node('H', 'Final Output')
 
@@ -485,7 +488,7 @@ The system operates as a hybrid AI agent with decision-aware execution:
 1. Predicts no-show probability using a trained ML model (Decision Tree)
 2. Uses an LLM for controlled, feature-grounded risk analysis to ensure interpretability and reduce hallucination
 3. Applies conditional routing using LangGraph:
-   - High-risk patients trigger knowledge retrieval (FAISS)
+   - High-risk patients trigger knowledge retrieval (Chroma)
    - Medium/Low-risk patients skip retrieval for efficiency
 4. Retrieves relevant healthcare guidelines only when necessary (RAG)
 5. Generates structured, actionable recommendations using an LLM
