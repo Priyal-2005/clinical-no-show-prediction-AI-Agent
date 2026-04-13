@@ -297,11 +297,13 @@ def recommendation_node(state: AgentState):
     # Convert docs to clean format
     docs_text = "\n".join(f"- {doc}" for doc in docs)
 
-    # Rule-based decision
-    if probability > 0.70:
+    wd = state["input_data"]["waiting_days"]
+
+    # Hybrid corrected decision logic
+    if probability > 0.70 or wd > 80:
         action_hint = "Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif 0.5 < probability <= 0.70:
+    elif probability > 0.50 or (wd > 30 and probability > 0.45):
         action_hint = "SMS Reminder"
         risk_level = "Medium"
     else:
@@ -376,10 +378,12 @@ Risk Analysis → Conditional Routing →
 
 def route_risk(state: AgentState):
     prob = state["probability"]
+    wd = state["input_data"]["waiting_days"]
 
-    if prob > 0.70:
+    # Hybrid correction logic
+    if prob > 0.70 or wd > 80:
         return "high_risk"
-    elif 0.5 < prob <= 0.70:
+    elif prob > 0.50 or (wd > 30 and prob > 0.45):
         return "medium_risk"
     else:
         return "low_risk"
