@@ -33,11 +33,11 @@ This system follows a **decision-aware hybrid AI pipeline**:
 
 **Step 3: Conditional Routing (LangGraph)**
 Based on predicted probability:
-- 🔴 **High Risk (> 0.70)**  
+- 🔴 **High Risk (≥ 0.65)**  
   → Retrieval (Chroma) → Recommendation (LLM) → Strong Intervention  
-- 🟡 **Medium Risk (0.50–0.70)**  
+- 🟡 **Medium Risk (0.45–0.65)**  
   → Direct Recommendation (LLM) → SMS / Call  
-- 🟢 **Low Risk (< 0.50)**  
+- 🟢 **Low Risk (< 0.45)**  
   → Direct Recommendation (LLM) → Minimal Action  
 
 **Step 4: Recommendation Generation**
@@ -184,9 +184,9 @@ def risk_analysis_node(state: AgentState):
       - SMS_received
 
       Risk Level Rule:
-      - >0.70 → High
-      - 0.50–0.70 → Medium
-      - <0.50 → Low
+      - ≥0.65 → High
+      - 0.45–0.65 → Medium
+      - <0.45 → Low
 
       Instructions:
       - Base your reasoning on the ML model behavior
@@ -259,7 +259,7 @@ def retrieval_node(state: AgentState):
     input_data = state["input_data"]
     probability = state["probability"]
 
-    if state["probability"] <= 0.70:
+    if state["probability"] < 0.65:
         return {"retrieved_docs": []}
 
     query = f"""
@@ -299,12 +299,12 @@ def recommendation_node(state: AgentState):
 
     wd = state["input_data"]["waiting_days"]
 
-    # Hybrid corrected decision logic
-    if probability > 0.70 or wd > 80:
+    # Clean probability-based decision logic (no forced overrides)
+    if probability >= 0.65:
         action_hint = "Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif probability > 0.50 or (wd > 30 and probability > 0.45):
-        action_hint = "SMS Reminder"
+    elif probability >= 0.45:
+        action_hint = "SMS Reminder + Optional Call"
         risk_level = "Medium"
     else:
         action_hint = "Standard Reminder"
@@ -380,10 +380,10 @@ def route_risk(state: AgentState):
     prob = state["probability"]
     wd = state["input_data"]["waiting_days"]
 
-    # Hybrid correction logic
-    if prob > 0.70 or wd > 80:
+    # Pure probability-based routing (consistent with ML output)
+    if prob >= 0.65:
         return "high_risk"
-    elif prob > 0.50 or (wd > 30 and prob > 0.45):
+    elif prob >= 0.45:
         return "medium_risk"
     else:
         return "low_risk"
