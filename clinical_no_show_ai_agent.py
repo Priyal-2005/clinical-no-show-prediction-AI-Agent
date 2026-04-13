@@ -262,11 +262,12 @@ def retrieval_node(state: AgentState):
     if state["probability"] < 0.65:
         return {"retrieved_docs": []}
 
+    sms_status = "No" if input_data["SMS_received"] == 0 else "Yes"
     query = f"""
         Patient at high risk of missing appointment.
-        Long waiting time: {input_data['waiting_days']}
+        Waiting days: {input_data['waiting_days']}
         Age: {input_data['Age']}
-        No SMS reminder: {1 - input_data['SMS_received']}
+        SMS reminder sent: {sms_status}
     """
 
     docs = retrieve_docs(query)
