@@ -224,7 +224,8 @@ graph = builder.compile()
 # ========== STREAMLIT UI ==========
 
 st.title("🏥 Clinical No-Show Prediction AI Agent")
-st.markdown("**Hybrid ML + LLM System with Conditional Routing**")
+st.markdown("### Hybrid ML + LLM System with Intelligent Conditional Routing")
+st.caption("Predict patient no-shows and get actionable, evidence-based interventions.")
 
 st.markdown("---")
 
@@ -258,7 +259,7 @@ day_of_week = st.select_slider(
 st.markdown("---")
 
 # Predict button
-if st.button("🔍 Analyze Patient Risk", type="primary", use_container_width=True):
+if st.button("🚀 Analyze Patient Risk", type="primary", use_container_width=True):
     
     # Build input
     input_data = {
@@ -275,7 +276,7 @@ if st.button("🔍 Analyze Patient Risk", type="primary", use_container_width=Tr
     }
     
     # Run agent
-    with st.spinner("🤖 Running AI Agent Pipeline..."):
+    with st.spinner("🤖 Running AI Agent Pipeline... Please wait"):
         state = {
             "input_data": input_data,
             "prediction": None,
@@ -305,29 +306,29 @@ if st.button("🔍 Analyze Patient Risk", type="primary", use_container_width=Tr
         badge_color = "#44ff44"
     
     st.markdown(f"## {risk_color} {risk_label}")
-    st.markdown(f"**No-Show Probability:** `{prob:.1%}`")
+    st.metric("No-Show Probability", f"{prob:.1%}")
     
     # Show if RAG was triggered
     if len(result['retrieved_docs']) > 0:
-        st.info(f"✅ **RAG Pipeline Activated** (Retrieved {len(result['retrieved_docs'])} guidelines)")
+        st.success(f"📚 RAG Activated: {len(result['retrieved_docs'])} relevant guidelines retrieved")
     else:
-        st.info("⚡ **Fast Path** (RAG skipped for efficiency)")
+        st.warning("⚡ Fast Path: Retrieval skipped for faster response")
     
     st.markdown("---")
     
     # Risk analysis
-    st.markdown("### 🔍 Risk Analysis")
+    st.markdown("### 🔍 AI Risk Analysis")
     st.info(result['risk_analysis'])
     
     # Recommendations
-    st.markdown("### 💡 Recommendations")
+    st.markdown("### 💡 Recommended Actions")
     st.success(result['final_recommendation'])
     
     # Retrieved docs (if any)
     if result['retrieved_docs']:
         st.markdown("### 📚 Evidence-Based Guidelines")
         for i, doc in enumerate(result['retrieved_docs'], 1):
-            st.markdown(f"{i}. {doc}")
+            st.markdown(f"- {doc}")
     
     st.markdown("---")
     
@@ -341,7 +342,7 @@ with st.sidebar:
     **ML Model:** Decision Tree  
     **Recall:** 75%  
     **LLM:** Groq LLaMA 3.3 70B  
-    **RAG:** Chroma Vectorstore
+    **RAG:** Chroma Vectorstore  
     **Framework:** LangGraph
     
     ---
