@@ -236,9 +236,10 @@ documents = [
 ]
 
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import FakeEmbeddings
+embedding = FakeEmbeddings(size=384)
 
-embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
 def setup_rag():
     return Chroma.from_texts(documents, embedding)
 
@@ -297,8 +298,6 @@ def recommendation_node(state: AgentState):
 
     # Convert docs to clean format
     docs_text = "\n".join(f"- {doc}" for doc in docs)
-
-    wd = state["input_data"]["waiting_days"]
 
     # Clean probability-based decision logic (no forced overrides)
     if probability >= 0.65:
@@ -379,7 +378,6 @@ Risk Analysis → Conditional Routing →
 
 def route_risk(state: AgentState):
     prob = state["probability"]
-    wd = state["input_data"]["waiting_days"]
 
     # Pure probability-based routing (consistent with ML output)
     if prob >= 0.65:
