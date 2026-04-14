@@ -221,6 +221,11 @@ print(result["final_recommendation"])
 
 ---
 
+# 🔗 Hosted Link
+https://genai-clinical-no-show-prediction.streamlit.app/
+
+---
+
 ## 🔧 Future Improvements
 
 1. **Patient History Integration**
@@ -243,36 +248,3 @@ print(result["final_recommendation"])
 - LLM: Groq LLaMA 3.3 70B (https://groq.com)
 - RAG Framework: LangChain + FAISS (https://python.langchain.com)
 - Agent Framework: LangGraph (https://github.com/langchain-ai/langgraph)
-
----
-
-## 🎓 Project Context
-
-**Course**: GenAI & Agentic AI  
-**Project**: Clinical No-Show Prediction & Care Coordination  
-**Team Size**: 3-4 students  
-**Submission**: End-Semester Capstone (Milestone 2)
-
----
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
----
-
-## 👥 Contributors
-
-- [Your Name] - ML Model & Agent Development
-- [Team Member 2] - RAG System & Deployment
-- [Team Member 3] - UI Design & Testing
-
----
-
-## 📞 Contact
-
-For questions or issues, please open a GitHub issue or contact [your-email@example.com]
-
----
-
-**Built with ❤️ for improving healthcare operations**
