@@ -2,10 +2,6 @@
 
 **Hybrid ML + LLM System with Conditional Routing for Healthcare Operations**
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![LangGraph](https://img.shields.io/badge/LangGraph-🦜-green)](https://github.com/langchain-ai/langgraph)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector_DB-blue)](https://github.com/facebookresearch/faiss)
-
 ## 📊 Overview
 
 This project builds an intelligent AI agent that predicts patient appointment no-shows and generates evidence-based intervention recommendations. It combines:
@@ -221,6 +217,11 @@ print(result["final_recommendation"])
 
 ---
 
+# 🔗 Hosted Link
+https://genai-clinical-no-show-prediction.streamlit.app/
+
+---
+
 ## 🔧 Future Improvements
 
 1. **Patient History Integration**
@@ -243,36 +244,3 @@ print(result["final_recommendation"])
 - LLM: Groq LLaMA 3.3 70B (https://groq.com)
 - RAG Framework: LangChain + FAISS (https://python.langchain.com)
 - Agent Framework: LangGraph (https://github.com/langchain-ai/langgraph)
-
----
-
-## 🎓 Project Context
-
-**Course**: GenAI & Agentic AI  
-**Project**: Clinical No-Show Prediction & Care Coordination  
-**Team Size**: 3-4 students  
-**Submission**: End-Semester Capstone (Milestone 2)
-
----
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
----
-
-## 👥 Contributors
-
-- [Your Name] - ML Model & Agent Development
-- [Team Member 2] - RAG System & Deployment
-- [Team Member 3] - UI Design & Testing
-
----
-
-## 📞 Contact
-
-For questions or issues, please open a GitHub issue or contact [your-email@example.com]
-
----
-
-**Built with ❤️ for improving healthcare operations**
