@@ -143,7 +143,7 @@ def retrieval_node(state: AgentState):
     input_data = state["input_data"]
     
     # Only retrieve for high-risk
-    if probability < 0.65:
+    if probability < 0.60:
         return {"retrieved_docs": []}
     
     query = f"""
@@ -161,10 +161,10 @@ def recommendation_node(state: AgentState):
     docs = state["retrieved_docs"]
     probability = state["probability"]
     
-    if probability >= 0.65:
+    if probability >= 0.60:
         action_hint = "Phone Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif probability >= 0.45:
+    elif probability >= 0.35:
         action_hint = "SMS Reminder"
         risk_level = "Medium"
     else:
