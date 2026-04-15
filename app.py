@@ -121,9 +121,9 @@ Context:
 - Ignore other features unless necessary
 
 Risk Levels:
-- >60% → High
-- 35-60% → Medium
-- <35% → Low
+- >65% → High
+- 50-65% → Medium
+- <50% → Low
 
 Provide concise analysis (max 80 words):
 1. Risk level reasoning
@@ -143,7 +143,7 @@ def retrieval_node(state: AgentState):
     input_data = state["input_data"]
     
     # Only retrieve for high-risk
-    if probability < 0.60:
+    if probability < 0.65:
         return {"retrieved_docs": []}
     
     query = f"""
@@ -161,10 +161,10 @@ def recommendation_node(state: AgentState):
     docs = state["retrieved_docs"]
     probability = state["probability"]
     
-    if probability >= 0.60:
+    if probability >= 0.65:
         action_hint = "Phone Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif probability >= 0.35:
+    elif probability >= 0.50:
         action_hint = "SMS Reminder"
         risk_level = "Medium"
     else:
@@ -198,9 +198,9 @@ Keep concise (max 120 words).
 
 def route_risk(state: AgentState):
     prob = state["probability"]
-    if prob >= 0.60:
+    if prob >= 0.65:
         return "high_risk"
-    elif prob >= 0.35:
+    elif prob >= 0.50:
         return "medium_risk"
     else:
         return "low_risk"
@@ -298,11 +298,11 @@ if st.button("🚀 Analyze Patient Risk", type="primary", use_container_width=Tr
     prob = result['probability']
     
     # Risk level badge
-    if prob >= 0.60:
+    if prob >= 0.65:
         risk_color = "🔴"
         risk_label = "HIGH RISK"
         badge_color = "#ff4444"
-    elif prob >= 0.35:
+    elif prob >= 0.50:
         risk_color = "🟡"
         risk_label = "MEDIUM RISK"
         badge_color = "#ffaa00"
@@ -362,9 +362,9 @@ with st.sidebar:
     ---
     
     ## 📈 Risk Thresholds
-    - **High:** > 60%
-    - **Medium:** 35-60%
-    - **Low:** < 35%
+    - **High:** > 65%
+    - **Medium:** 50-65%
+    - **Low:** < 50%
     """)
     
     st.markdown("---")
