@@ -121,9 +121,9 @@ Context:
 - Ignore other features unless necessary
 
 Risk Levels:
-- >65% → High
-- 45-65% → Medium
-- <45% → Low
+- >60% → High
+- 35-60% → Medium
+- <35% → Low
 
 Provide concise analysis (max 80 words):
 1. Risk level reasoning
@@ -362,9 +362,9 @@ with st.sidebar:
     ---
     
     ## 📈 Risk Thresholds
-    - **High:** > 65%
-    - **Medium:** 45-65%
-    - **Low:** < 45%
+    - **High:** > 60%
+    - **Medium:** 35-60%
+    - **Low:** < 35%
     """)
     
     st.markdown("---")
