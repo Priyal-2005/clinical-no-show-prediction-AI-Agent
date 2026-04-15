@@ -2,10 +2,6 @@
 
 **Hybrid ML + LLM System with Conditional Routing for Healthcare Operations**
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![LangGraph](https://img.shields.io/badge/LangGraph-🦜-green)](https://github.com/langchain-ai/langgraph)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector_DB-blue)](https://github.com/facebookresearch/faiss)
-
 ## 📊 Overview
 
 This project builds an intelligent AI agent that predicts patient appointment no-shows and generates evidence-based intervention recommendations. It combines:
