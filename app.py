@@ -62,6 +62,14 @@ model = load_model()
 llm = setup_llm()
 vectorstore = setup_rag()
 
+def get_risk_level(prob):
+    if prob < 0.3:
+        return "Low"
+    elif prob < 0.7:
+        return "Medium"
+    else:
+        return "High"
+
 # ========== AGENT LOGIC ==========
 
 class AgentState(TypedDict):
