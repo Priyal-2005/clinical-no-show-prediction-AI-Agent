@@ -198,9 +198,9 @@ Keep concise (max 120 words).
 
 def route_risk(state: AgentState):
     prob = state["probability"]
-    if prob >= 0.65:
+    if prob >= 0.60:
         return "high_risk"
-    elif prob >= 0.45:
+    elif prob >= 0.35:
         return "medium_risk"
     else:
         return "low_risk"
@@ -298,11 +298,11 @@ if st.button("🚀 Analyze Patient Risk", type="primary", use_container_width=Tr
     prob = result['probability']
     
     # Risk level badge
-    if prob >= 0.65:
+    if prob >= 0.60:
         risk_color = "🔴"
         risk_label = "HIGH RISK"
         badge_color = "#ff4444"
-    elif prob >= 0.45:
+    elif prob >= 0.35:
         risk_color = "🟡"
         risk_label = "MEDIUM RISK"
         badge_color = "#ffaa00"
