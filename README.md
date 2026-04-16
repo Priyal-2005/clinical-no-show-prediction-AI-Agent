@@ -17,8 +17,8 @@ This project builds an intelligent AI agent that predicts patient appointment no
 ```
 Input → ML Prediction → Risk Analysis (LLM) →
                           ├─ High Risk (>65%) → FAISS Retrieval → Recommendation
-                          ├─ Medium Risk (45-65%) → Direct Recommendation
-                          └─ Low Risk (<45%) → Direct Recommendation
+                          ├─ Medium Risk (50-65%) → Direct Recommendation
+                          └─ Low Risk (<50%) → Direct Recommendation
 ```
 
 **Why This Matters:**

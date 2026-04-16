@@ -382,7 +382,7 @@ def route_risk(state: AgentState):
     # Pure probability-based routing (consistent with ML output)
     if prob >= 0.65:
         return "high_risk"
-    elif prob >= 0.45:
+    elif prob >= 0.50:
         return "medium_risk"
     else:
         return "low_risk"
