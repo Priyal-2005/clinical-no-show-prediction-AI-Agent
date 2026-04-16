@@ -35,9 +35,9 @@ This system follows a **decision-aware hybrid AI pipeline**:
 Based on predicted probability:
 - 🔴 **High Risk (≥ 0.65)**  
   → Retrieval (Chroma) → Recommendation (LLM) → Strong Intervention  
-- 🟡 **Medium Risk (0.45–0.65)**  
+- 🟡 **Medium Risk (0.50–0.65)**  
   → Direct Recommendation (LLM) → SMS / Call  
-- 🟢 **Low Risk (< 0.45)**  
+- 🟢 **Low Risk (< 0.50)**  
   → Direct Recommendation (LLM) → Minimal Action  
 
 **Step 4: Recommendation Generation**
@@ -185,8 +185,8 @@ def risk_analysis_node(state: AgentState):
 
       Risk Level Rule:
       - ≥0.65 → High
-      - 0.45–0.65 → Medium
-      - <0.45 → Low
+      - 0.50–0.65 → Medium
+      - <0.50 → Low
 
       Instructions:
       - Base your reasoning on the ML model behavior
@@ -303,7 +303,7 @@ def recommendation_node(state: AgentState):
     if probability >= 0.65:
         action_hint = "Call + SMS + Consider Overbooking"
         risk_level = "High"
-    elif probability >= 0.45:
+    elif probability >= 0.50:
         action_hint = "SMS Reminder + Optional Call"
         risk_level = "Medium"
     else:
