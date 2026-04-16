@@ -218,7 +218,7 @@ print(result["final_recommendation"])
 ---
 
 # 🔗 Hosted Link
-https://genai-clinical-no-show-prediction.streamlit.app/
+https://clinical-no-show-prediction-ai-agent.streamlit.app/
 
 ---
 
